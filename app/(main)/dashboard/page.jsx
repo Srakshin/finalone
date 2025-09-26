@@ -8,6 +8,8 @@ import { BudgetProgress } from "./_components/budget-progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { DashboardOverview } from "./_components/transaction-overview";
+import TransactionUpload from "@/components/transaction-upload";
+import BankStatementChat from "@/components/bank-statement-chat";
 
 export default async function DashboardPage() {
   const [accounts, transactions] = await Promise.all([
@@ -30,6 +32,12 @@ export default async function DashboardPage() {
         initialBudget={budgetData?.budget}
         currentExpenses={budgetData?.currentExpenses || 0}
       />
+
+      {/* Transaction Upload and AI Chat */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <TransactionUpload />
+        <BankStatementChat />
+      </div>
 
       {/* Dashboard Overview */}
       <DashboardOverview
