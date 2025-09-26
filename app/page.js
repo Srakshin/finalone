@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import HeroSection from "@/components/hero";
+import Chatbot from "@/components/chatbot-advanced";
 import Link from "next/link";
 
 const LandingPage = () => {
@@ -30,6 +31,9 @@ const LandingPage = () => {
           </Link>
         </div>
       </section>
+      
+      {/* Chatbot */}
+      <Chatbot />
     </div>
   );
 };
