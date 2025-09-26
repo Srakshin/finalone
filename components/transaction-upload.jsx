@@ -57,7 +57,8 @@ const TransactionUpload = () => {
       const result = await response.json();
       
       setUploadStatus("success");
-      toast.success("Transaction data uploaded successfully!");
+      toast.success(`File uploaded to S3: ${result.s3Key}`);
+      console.log(`✅ Uploaded to S3: s3://${result.s3Bucket}/${result.s3Key}`);
       
       // Reset form
       setFile(null);
@@ -183,8 +184,9 @@ const TransactionUpload = () => {
         )}
         
         <div className="text-xs text-gray-500 space-y-1">
-          <p>• Your transaction data will be securely stored in AWS S3</p>
-          <p>• Files are encrypted and only accessible by your account</p>
+          <p>• Files stored in S3 bucket: <code>mybucketawsibm/data/</code></p>
+          <p>• Encrypted and secured with AWS S3 server-side encryption</p>
+          <p>• Automatically indexed for AI-powered financial analysis</p>
           <p>• Supported formats: PDF bank statements, credit card statements</p>
         </div>
       </CardContent>

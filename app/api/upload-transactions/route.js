@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-// Note: You'll need to install AWS SDK first
-// npm install @aws-sdk/client-s3
+// AWS S3 Integration with real credentials
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+// Initialize S3 client with your credentials
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION || "us-east-1",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 export async function POST(request) {
   try {
@@ -41,6 +50,7 @@ export async function POST(request) {
       fileName: file.name,
       size: file.size,
       s3Key: s3Key,
+      s3Bucket: process.env.AWS_S3_BUCKET_NAME,
       uploadDate: new Date().toISOString()
     });
 
@@ -86,19 +96,39 @@ async function uploadToS3(file, userId) {
 }
 */
 
-// Alternative: Direct S3 upload (enable after installing AWS SDK)
+// Real S3 upload function
 async function uploadToS3(file, userId) {
   try {
-    // This is a placeholder - replace with actual S3 upload
-    console.log(`Uploading file: ${file.name} for user: ${userId}`);
+    console.log(`Uploading file: ${file.name} for user: ${userId} to S3`);
     
-    // Simulate S3 upload delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Convert file to buffer
+    const buffer = Buffer.from(await file.arrayBuffer());
     
-    // Return mock S3 key
-    return `transactions/${userId}/${Date.now()}-${file.name}`;
+    // Create S3 key with data folder structure: data/userId/timestamp-filename
+    const timestamp = Date.now();
+    const s3Key = `data/${userId}/${timestamp}-${file.name}`;
+    
+    // Upload to S3
+    const command = new PutObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET_NAME, // mybucketawsibm
+      Key: s3Key,
+      Body: buffer,
+      ContentType: file.type,
+      Metadata: {
+        userId: userId,
+        originalName: file.name,
+        uploadDate: new Date().toISOString(),
+        fileSize: file.size.toString(),
+      },
+    });
+
+    const result = await s3Client.send(command);
+    console.log(`✅ File uploaded successfully to S3: ${s3Key}`);
+    console.log(`📍 S3 Location: s3://${process.env.AWS_S3_BUCKET_NAME}/${s3Key}`);
+    
+    return s3Key;
   } catch (error) {
-    console.error("S3 upload error:", error);
-    throw error;
+    console.error("❌ S3 upload error:", error);
+    throw new Error(`Failed to upload to S3: ${error.message}`);
   }
 }
