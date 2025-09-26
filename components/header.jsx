@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { PenBox, LayoutDashboard } from "lucide-react";
+import { PenBox, LayoutDashboard, BookOpen, Compass } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { checkUser } from "@/lib/checkUser";
@@ -28,6 +28,27 @@ const Header = async () => {
               Testimonials
             </a>
           </SignedOut>
+          
+          {/* Navigation buttons - visible for both signed in and signed out users */}
+          <Link
+            href="/explore"
+            className="text-gray-600 hover:text-blue-600 flex items-center gap-2"
+          >
+            <Button variant="outline" className="flex items-center gap-2">
+              <Compass size={18} />
+              <span className="text-black">Explore</span>
+            </Button>
+          </Link>
+          
+          <Link
+            href="/resources"
+            className="text-gray-600 hover:text-blue-600 flex items-center gap-2"
+          >
+            <Button variant="outline" className="flex items-center gap-2">
+              <BookOpen size={18} />
+              <span className="text-black">Resources</span>
+            </Button>
+          </Link>
         </div>
 
         {/* Action Buttons */}
